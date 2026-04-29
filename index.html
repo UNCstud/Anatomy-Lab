@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anatomy Study Lab</title>
+</head>
+<body>
+<style>
+html, body { height: 100%; width: 100%; }
+body { display: flex; flex-direction: column; min-height: 100vh; }
+.app { flex: 1; overflow: visible; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font-sans, system-ui);
+  background: #0B0B16;
+  padding: 0;
+}
+
+.app {
+  max-width: 780px; width: 100%;
+  margin: 0 auto;
+  background: #0B0B16;
+  border-radius: 0;
+  
+  position: relative;
+  color: #E8E6F0;
+}
+
+.app::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(127, 119, 221, 0.18), transparent 50%),
+    radial-gradient(ellipse at 85% 100%, rgba(212, 83, 126, 0.14), transparent 50%),
+    radial-gradient(ellipse at 50% 60%, rgba(29, 158, 117, 0.06), transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.inner { position: relative; z-index: 1; padding: 1.5rem 2rem; }
+
+.hero {
+  background: linear-gradient(135deg, rgba(60, 52, 137, 0.9), rgba(153, 53, 86, 0.75), rgba(216, 90, 48, 0.65));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  padding: 1.5rem 1.25rem;
+  margin-bottom: 1.25rem;
+  position: relative;
+  
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 160px; height: 160px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+  filter: blur(20px);
+}
+
+.hero-content { position: relative; z-index: 1; }
+
+.hero-icons {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 0.875rem;
+}
+
+.hero-icon {
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.hero-icon svg { width: 16px; height: 16px; }
+
+.hero-title {
+  font-size: 24px;
+  font-weight: 500;
+  color: white;
+  letter-spacing: -0.5px;
+}
+
+.hero-sub {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 4px 0 1rem;
+}
+
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.stat {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 0.6rem 0.4rem;
+  text-align: center;
+}
+
+.stat-num { font-size: 20px; font-weight: 500; color: white; display: block; }
+.stat-label { font-size: 10px; opacity: 0.85; text-transform: uppercase; letter-spacing: 0.5px; color: white; }
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 4px;
+  border-radius: 10px;
+  margin-bottom: 1.25rem;
+}
+
+.tab {
+  flex: 1;
+  padding: 0.6rem 0.5rem;
+  border: none;
+  background: #0B0B16;
+  color: rgba(232, 230, 240, 0.6);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 7px;
+  transition: all 0.2s;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.tab svg { width: 13px; height: 13px; }
+
+.tab.active {
+  background: linear-gradient(135deg, #7F77DD, #D4537E);
+  color: white;
+  box-shadow: 0 4px 14px rgba(127, 119, 221, 0.4);
+}
+
+.tab:hover:not(.active) {
+  color: white;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.panel { display: none; }
+.panel.active { display: block; }
+
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.875rem;
+}
+
+.section-title { font-size: 16px; font-weight: 500; color: white; }
+
+.pill {
+  font-size: 11px;
+  color: rgba(232, 230, 240, 0.7);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.systems-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.sys-card {
+  border-radius: 14px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.25s;
+  position: relative;
+  
+  background: var(--bg);
+  border: 1px solid var(--bd);
+}
+
+.sys-card::before {
+  content: '';
+  position: absolute;
+  top: -30px; right: -30px;
+  width: 80px; height: 80px;
+  background: var(--glow);
+  border-radius: 50%;
+  filter: blur(20px);
+  opacity: 0.5;
+}
+
+.sys-card > * { position: relative; z-index: 1; }
+
+.sys-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px var(--shadow);
+}
+
+.sys-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent);
+  color: white;
+  box-shadow: 0 4px 14px var(--shadow);
+}
+
+.sys-icon svg { width: 22px; height: 22px; }
+
+.sys-name { font-size: 14px; font-weight: 500; color: white; }
+.sys-count { font-size: 12px; color: rgba(255, 255, 255, 0.65); margin-top: 2px; }
+
+.list-item {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 3px solid var(--ac, #7F77DD);
+  border-radius: 10px;
+  padding: 0.875rem 1rem;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.list-item:hover {
+  background: rgba(255, 255, 255, 0.07);
+  transform: translateX(4px);
+  border-left-width: 5px;
+}
+
+.li-main { flex: 1; min-width: 0; }
+.li-name { font-size: 14px; font-weight: 500; color: white; margin-bottom: 2px; }
+.li-desc {
+  font-size: 12px;
+  color: rgba(232, 230, 240, 0.65);
+  line-height: 1.5;
+  
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.li-arrow { color: var(--ac, #7F77DD); font-size: 18px; }
+
+.detail {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  
+  margin-bottom: 1rem;
+}
+
+.banner {
+  background: var(--bnr);
+  padding: 1.5rem;
+  position: relative;
+  
+}
+
+.banner::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 130px; height: 130px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+}
+
+.banner-icon {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+  position: relative;
+  color: white;
+}
+
+.banner-icon svg { width: 24px; height: 24px; }
+
+.banner-cat {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 4px;
+  position: relative;
+  font-weight: 500;
+}
+
+.banner-name {
+  font-size: 24px;
+  font-weight: 500;
+  color: white;
+  position: relative;
+}
+
+.body { padding: 1.25rem 1.5rem; }
+
+.row {
+  padding: 0.875rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.row:first-child { border-top: none; padding-top: 0; }
+
+.row-label {
+  font-size: 11px;
+  color: rgba(232, 230, 240, 0.55);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.row-val { font-size: 14px; line-height: 1.6; color: rgba(232, 230, 240, 0.95); }
+
+.back {
+  background: #0B0B16;
+  border: none;
+  color: rgba(232, 230, 240, 0.65);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0.5rem 0;
+  margin-bottom: 0.5rem;
+  font-family: inherit;
+}
+
+.back:hover { color: white; }
+
+.quiz-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  
+}
+
+.quiz-banner {
+  background: linear-gradient(135deg, #1D9E75, #185FA5);
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  font-size: 12px;
+}
+
+.quiz-body { padding: 1.5rem; }
+
+.quiz-prompt {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(232, 230, 240, 0.55);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.quiz-clue {
+  background: linear-gradient(135deg, rgba(127, 119, 221, 0.15), rgba(212, 83, 126, 0.12));
+  border: 1px solid rgba(127, 119, 221, 0.25);
+  border-radius: 10px;
+  padding: 1.125rem 1.25rem;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  min-height: 80px;
+  color: rgba(232, 230, 240, 0.95);
+}
+
+.quiz-meta {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.tag {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 500;
+  border: 1px solid;
+}
+
+.tag-sys { background: rgba(127, 119, 221, 0.15); color: #AFA9EC; border-color: rgba(127, 119, 221, 0.3); }
+.tag-loc { background: rgba(29, 158, 117, 0.15); color: #5DCAA5; border-color: rgba(29, 158, 117, 0.3); }
+
+.input-row { display: flex; gap: 8px; margin-bottom: 1rem; }
+
+.q-input {
+  flex: 1;
+  padding: 0.75rem 0.875rem;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: inherit;
+  background: rgba(255, 255, 255, 0.04);
+  color: white;
+  transition: all 0.15s;
+}
+
+.q-input::placeholder { color: rgba(232, 230, 240, 0.4); }
+
+.q-input:focus {
+  outline: none;
+  border-color: #7F77DD;
+  background: rgba(127, 119, 221, 0.08);
+  box-shadow: 0 0 0 3px rgba(127, 119, 221, 0.15);
+}
+
+.btn {
+  padding: 0.75rem 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  color: white;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+
+.btn:hover { background: rgba(255, 255, 255, 0.08); }
+.btn:active { transform: scale(0.98); }
+
+.btn-primary {
+  background: linear-gradient(135deg, #7F77DD, #D4537E);
+  border-color: transparent;
+  box-shadow: 0 4px 14px rgba(127, 119, 221, 0.35);
+  color: white;
+}
+
+.btn-primary:hover {
+  box-shadow: 0 6px 20px rgba(127, 119, 221, 0.5);
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, #7F77DD, #D4537E);
+}
+
+.feedback {
+  display: none;
+  padding: 0.875rem 1rem;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  font-weight: 500;
+  border: 1px solid;
+}
+
+.feedback.show { display: block; }
+
+.feedback.ok {
+  background: rgba(29, 158, 117, 0.15);
+  color: #9FE1CB;
+  border-color: rgba(29, 158, 117, 0.4);
+}
+
+.feedback.no {
+  background: rgba(226, 75, 74, 0.15);
+  color: #F7C1C1;
+  border-color: rgba(226, 75, 74, 0.4);
+}
+
+.track {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  
+}
+
+.fill {
+  height: 100%;
+  background: linear-gradient(90deg, #7F77DD, #D4537E, #D85A30);
+  transition: width 0.4s;
+  box-shadow: 0 0 12px rgba(212, 83, 126, 0.5);
+}
+
+.flashcard {
+  background: linear-gradient(135deg, var(--c1), var(--c2));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 2rem 1.5rem;
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  transition: all 0.25s;
+  color: white;
+  position: relative;
+  
+}
+
+.flashcard::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 220px; height: 220px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  filter: blur(2px);
+}
+
+.flashcard::after {
+  content: '';
+  position: absolute;
+  bottom: -50px; left: -50px;
+  width: 180px; height: 180px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 50%;
+  filter: blur(2px);
+}
+
+.flashcard > * { position: relative; z-index: 1; }
+
+.flashcard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+}
+
+.fc-icon {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.fc-icon svg { width: 20px; height: 20px; }
+
+.fc-cat {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  opacity: 0.9;
+  margin-bottom: 0.875rem;
+  font-weight: 500;
+}
+
+.fc-content {
+  font-size: 26px;
+  font-weight: 500;
+  line-height: 1.3;
+  margin-bottom: 1rem;
+  max-width: 460px;
+  letter-spacing: -0.3px;
+}
+
+.fc-content.answer {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.6;
+  opacity: 0.95;
+}
+
+.fc-hint {
+  font-size: 11px;
+  opacity: 0.75;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.fc-controls { display: flex; gap: 8px; align-items: center; }
+.fc-controls .btn { padding: 0.625rem 1rem; }
+.fc-controls .track { flex: 1; }
+
+.search-wrap { margin-bottom: 1rem; position: relative; }
+
+.s-input {
+  width: 100%;
+  padding: 0.875rem 0.875rem 0.875rem 2.75rem;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  font-size: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  color: white;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+
+.s-input::placeholder { color: rgba(232, 230, 240, 0.4); }
+
+.s-input:focus {
+  outline: none;
+  border-color: #7F77DD;
+  background: rgba(127, 119, 221, 0.08);
+  box-shadow: 0 0 0 3px rgba(127, 119, 221, 0.15);
+}
+
+.s-icon {
+  position: absolute;
+  left: 0.875rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(232, 230, 240, 0.5);
+}
+
+.empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: rgba(232, 230, 240, 0.5);
+  font-size: 13px;
+}
+
+.filters { display: flex; gap: 6px; margin-bottom: 1rem; flex-wrap: wrap; }
+
+.filter {
+  font-size: 12px;
+  padding: 6px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(232, 230, 240, 0.7);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+  font-weight: 500;
+}
+
+.filter.active {
+  background: linear-gradient(135deg, #7F77DD, #D4537E);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 2px 10px rgba(127, 119, 221, 0.4);
+}
+
+.filter:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+}
+
+.complete {
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  background: linear-gradient(135deg, #3C3489, #993556, #BA7517);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  color: white;
+  position: relative;
+  
+}
+
+.complete::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 200px; height: 200px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  filter: blur(2px);
+}
+
+.complete > * { position: relative; z-index: 1; }
+.complete-num { font-size: 56px; font-weight: 500; margin: 1rem 0 0.25rem; letter-spacing: -2px; }
+.complete-label { font-size: 13px; opacity: 0.9; margin-bottom: 1.5rem; }
+.complete-msg { font-size: 14px; margin-bottom: 1.5rem; opacity: 0.95; line-height: 1.5; max-width: 320px; margin-left: auto; margin-right: auto; }
+
+.complete .btn { background: white; color: #3C3489; border: none; padding: 0.875rem 2rem; font-weight: 500; }
+.complete .btn:hover { background: rgba(255, 255, 255, 0.95); }
+
+.shuffle {
+  background: linear-gradient(135deg, #1D9E75, #0F6E56);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 2px 10px rgba(29, 158, 117, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.shuffle svg { width: 12px; height: 12px; }
+
+.shuffle:hover {
+  box-shadow: 0 4px 14px rgba(29, 158, 117, 0.5);
+  transform: translateY(-1px);
+}
+
+/* Review panel styles */
+.review-empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: rgba(232, 230, 240, 0.5);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.review-empty .review-empty-icon {
+  font-size: 36px;
+  margin-bottom: 0.75rem;
+}
+
+.review-summary {
+  background: linear-gradient(135deg, rgba(60, 52, 137, 0.5), rgba(153, 53, 86, 0.4));
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  padding: 1.5rem 2rem;
+  margin-bottom: 1.25rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.review-summary-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.review-summary-text { flex: 1; }
+.review-summary-title { font-size: 15px; font-weight: 500; color: white; margin-bottom: 3px; }
+.review-summary-sub { font-size: 12px; color: rgba(232,230,240,0.7); line-height: 1.5; }
+
+.review-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 3px solid #D4537E;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  
+}
+
+.review-card-header {
+  padding: 0.875rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  cursor: pointer;
+  gap: 10px;
+}
+
+.review-card-header:hover { background: rgba(255,255,255,0.03); }
+
+.review-card-name { font-size: 14px; font-weight: 500; color: white; margin-bottom: 2px; }
+.review-card-sys {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(212, 83, 126, 0.15);
+  color: #ED93B1;
+  border: 1px solid rgba(212, 83, 126, 0.3);
+  display: inline-block;
+  margin-bottom: 4px;
+}
+
+.review-card-clue { font-size: 12px; color: rgba(232,230,240,0.6); line-height: 1.5; }
+
+.review-chevron {
+  color: rgba(232,230,240,0.4);
+  font-size: 18px;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.review-card.open .review-chevron { transform: rotate(90deg); }
+
+.review-card-body {
+  display: none;
+  padding: 0 1rem 1rem;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.review-card.open .review-card-body { display: block; }
+
+.review-row {
+  padding: 0.625rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.review-row:last-child { border-bottom: none; padding-bottom: 0; }
+
+.review-row-label {
+  font-size: 10px;
+  color: rgba(232,230,240,0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  font-weight: 500;
+  margin-bottom: 3px;
+}
+
+.review-row-val { font-size: 13px; color: rgba(232,230,240,0.9); line-height: 1.55; }
+
+.review-tip {
+  margin-top: 0.75rem;
+  background: rgba(127, 119, 221, 0.1);
+  border: 1px solid rgba(127, 119, 221, 0.2);
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+
+.review-tip-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #AFA9EC;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.review-tip-text { font-size: 12px; color: rgba(232,230,240,0.85); line-height: 1.6; }
+
+.review-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 1.25rem;
+}
+
+.review-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-weight: 500;
+}
+
+.badge-missed {
+  background: rgba(226, 75, 74, 0.15);
+  color: #F7C1C1;
+  border: 1px solid rgba(226, 75, 74, 0.3);
+}
+
+.badge-correct {
+  background: rgba(29, 158, 117, 0.15);
+  color: #9FE1CB;
+  border: 1px solid rgba(29, 158, 117, 0.3);
+}
+</style>
+
+<div class="app">
+  <div class="inner">
+    <div class="hero">
+      <div class="hero-content">
+        <div class="hero-icons">
+          <div class="hero-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+          <div class="hero-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6.081 20c1.612 0 2.919-1.335 2.919-2.98V7.5a3.5 3.5 0 0 0-7 0v9.52C2 18.665 3.307 20 4.919 20zM17.919 20c-1.612 0-2.919-1.335-2.919-2.98V7.5a3.5 3.5 0 0 1 7 0v9.52c0 1.645-1.307 2.98-2.919 2.98zM12 4v13"/></svg></div>
+          <div class="hero-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg></div>
+          <div class="hero-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 10c.7-.7 1.69 0 2.5 0a2.5 2.5 0 1 0 0-5 .5.5 0 0 1-.5-.5 2.5 2.5 0 1 0-5 0c0 .81.7 1.8 0 2.5l-7 7c-.7.7-1.69 0-2.5 0a2.5 2.5 0 0 0 0 5c.28 0 .5.22.5.5a2.5 2.5 0 1 0 5 0c0-.81-.7-1.8 0-2.5Z"/></svg></div>
+        </div>
+        <h1 class="hero-title">Anatomy study lab</h1>
+        <p class="hero-sub">UNC Biology 252L · practice for exams</p>
+        <div class="hero-stats">
+          <div class="stat"><span class="stat-num" id="totalCount">0</span><span class="stat-label">Total</span></div>
+          <div class="stat"><span class="stat-num" id="systemCount">8</span><span class="stat-label">Systems</span></div>
+          <div class="stat"><span class="stat-num" id="studiedCount">0</span><span class="stat-label">Studied</span></div>
+          <div class="stat"><span class="stat-num" id="accuracyStat">—</span><span class="stat-label">Accuracy</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="browse"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Browse</button>
+      <button class="tab" data-tab="quiz"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>Quiz</button>
+      <button class="tab" data-tab="cards"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg>Cards</button>
+      <button class="tab" data-tab="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>Search</button>
+      <button class="tab" id="reviewTab" data-tab="review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Review</button>
+    </div>
+
+    <div id="browse" class="panel active">
+      <div id="bHome">
+        <div class="section-head">
+          <div class="section-title">Body systems</div>
+          <span class="pill">Tap to explore</span>
+        </div>
+        <div class="systems-grid" id="sysGrid"></div>
+      </div>
+      <div id="bList" style="display:none;"></div>
+      <div id="bDetail" style="display:none;"></div>
+    </div>
+
+    <div id="quiz" class="panel">
+      <div class="filters" id="qFilters"></div>
+      <div id="qMain"></div>
+    </div>
+
+    <div id="cards" class="panel">
+      <div class="filters" id="cFilters"></div>
+      <div class="section-head" style="margin-bottom:0.75rem;">
+        <span class="pill" id="cProg">Card 1</span>
+        <button class="shuffle" onclick="shuf()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>Shuffle</button>
+      </div>
+      <div class="flashcard" id="fc" onclick="flip()" style="--c1:#534AB7;--c2:#D4537E;">
+        <div class="fc-icon" id="fcIcon"></div>
+        <div class="fc-cat" id="fcCat"></div>
+        <div class="fc-content" id="fcContent"></div>
+        <div class="fc-hint" id="fcHint">Tap to reveal</div>
+      </div>
+      <div class="fc-controls">
+        <button class="btn" onclick="prev()">← Prev</button>
+        <div class="track"><div class="fill" id="cFill"></div></div>
+        <button class="btn" onclick="next()">Next →</button>
+      </div>
+    </div>
+
+    <div id="search" class="panel">
+      <div class="search-wrap">
+        <svg class="s-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" class="s-input" id="sInput" placeholder="Search by name, function, or location..." oninput="srch()">
+      </div>
+      <div id="sResults"></div>
+    </div>
+
+    <div id="review" class="panel">
+      <div id="reviewContent"></div>
+    </div>
+
+<script>
+const SVG = {
+  bone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 10c.7-.7 1.69 0 2.5 0a2.5 2.5 0 1 0 0-5 .5.5 0 0 1-.5-.5 2.5 2.5 0 1 0-5 0c0 .81.7 1.8 0 2.5l-7 7c-.7.7-1.69 0-2.5 0a2.5 2.5 0 0 0 0 5c.28 0 .5.22.5.5a2.5 2.5 0 1 0 5 0c0-.81-.7-1.8 0-2.5Z"/></svg>',
+  muscle: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 8c0 2-1 3-2.5 3.5L11 13c-1.5.5-2.5 1.5-2.5 3.5 0 2 1.5 3.5 3.5 3.5s3.5-1.5 3.5-3.5"/><path d="M6.5 16c0-2 1-3 2.5-3.5L13 11c1.5-.5 2.5-1.5 2.5-3.5 0-2-1.5-3.5-3.5-3.5S8.5 5.5 8.5 7.5"/></svg>',
+  lungs: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.081 20c1.612 0 2.919-1.335 2.919-2.98V7.5a3.5 3.5 0 0 0-7 0v9.52C2 18.665 3.307 20 4.919 20zM17.919 20c-1.612 0-2.919-1.335-2.919-2.98V7.5a3.5 3.5 0 0 1 7 0v9.52c0 1.645-1.307 2.98-2.919 2.98zM12 4v13"/></svg>',
+  heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+  brain: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>',
+  stomach: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4M5 6h14a2 2 0 0 1 2 2v3a8 8 0 0 1-16 0V8a2 2 0 0 1 2-2zM7 14c1 2 3 4 5 4s4-2 5-4"/></svg>',
+  kidney: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4c-3 0-5 2-5 5v6c0 3 2 5 5 5s4-2 4-5c0-2 1-3 2-3s2 1 2 3c0 3 1 5 4 5"/></svg>',
+  gland: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="2"/><circle cx="6" cy="14" r="2"/><circle cx="18" cy="14" r="2"/><circle cx="12" cy="20" r="2"/><path d="M12 8v10M8 14h8"/></svg>'
+};
+
+const A = {
+  Skeleton: {
+    icon: SVG.bone,
+    bg: 'linear-gradient(135deg, rgba(24, 95, 165, 0.2), rgba(55, 138, 221, 0.08))',
+    bd: 'rgba(55, 138, 221, 0.28)',
+    accent: 'linear-gradient(135deg, #185FA5, #378ADD)',
+    glow: '#378ADD', shadow: 'rgba(55, 138, 221, 0.35)',
+    ac: '#85B7EB',
+    bnr: 'linear-gradient(135deg, #185FA5, #378ADD)',
+    c1: '#185FA5', c2: '#378ADD',
+    items: [
+      { name: 'Humerus', desc: 'Long bone of the upper arm articulating with the scapula and the radius/ulna.', loc: 'Upper arm', fn: 'Support, arm movement, blood cell production' },
+      { name: 'Femur', desc: 'Longest and strongest bone in the body, located in the thigh.', loc: 'Thigh', fn: 'Body weight support, leg movement' },
+      { name: 'Tibia', desc: 'Larger weight-bearing bone of the lower leg, the shinbone.', loc: 'Lower leg (medial)', fn: 'Weight-bearing, knee/ankle articulation' },
+      { name: 'Fibula', desc: 'Smaller, non-weight-bearing bone lateral to the tibia.', loc: 'Lower leg (lateral)', fn: 'Muscle attachment, ankle stability' },
+      { name: 'Radius', desc: 'Lateral bone of the forearm allowing supination and pronation.', loc: 'Forearm (thumb side)', fn: 'Forearm rotation, hand movement' },
+      { name: 'Ulna', desc: 'Medial bone of the forearm with primary articulation at the elbow.', loc: 'Forearm (pinky side)', fn: 'Elbow stability, forearm support' },
+      { name: 'Scapula', desc: 'Flat triangular shoulder blade in the upper back.', loc: 'Upper back', fn: 'Muscle attachment, arm articulation' },
+      { name: 'Clavicle', desc: 'S-shaped collarbone connecting the sternum to the scapula.', loc: 'Anterior shoulder', fn: 'Shoulder support, force transmission' },
+      { name: 'Sternum', desc: 'Flat bone in the center of the chest articulating with ribs and clavicles.', loc: 'Anterior chest', fn: 'Rib protection, muscle attachment' },
+      { name: 'Vertebrae', desc: 'The 33 individual bones forming the spinal column.', loc: 'Back (axial)', fn: 'Spinal cord protection, body support' },
+      { name: 'Cranium', desc: 'The eight bones of the skull that protect the brain.', loc: 'Head', fn: 'Brain protection, sensory housing' },
+      { name: 'Mandible', desc: 'The lower jaw, the strongest bone of the face.', loc: 'Lower face', fn: 'Chewing, speech, facial structure' },
+      { name: 'Carpals', desc: 'Eight small wrist bones arranged in two rows.', loc: 'Wrist', fn: 'Wrist flexibility, hand movement' },
+      { name: 'Metacarpals', desc: 'Five long bones of the palm.', loc: 'Hand (palm)', fn: 'Hand structure, finger support' },
+      { name: 'Phalanges', desc: 'Bones of the fingers and toes.', loc: 'Fingers and toes', fn: 'Fine motor control, gripping' },
+      { name: 'Patella', desc: 'Triangular sesamoid bone protecting the knee, the kneecap.', loc: 'Anterior knee', fn: 'Knee protection, leverage for extension' },
+      { name: 'Pelvis', desc: 'Basin-shaped structure formed by the ilium, ischium, and pubis.', loc: 'Lower trunk', fn: 'Organ support, leg articulation' },
+      { name: 'Ribs', desc: 'Twelve pairs of curved bones forming the rib cage.', loc: 'Thorax', fn: 'Heart and lung protection, breathing' }
+    ]
+  },
+  Muscles: {
+    icon: SVG.muscle,
+    bg: 'linear-gradient(135deg, rgba(153, 60, 29, 0.2), rgba(216, 90, 48, 0.08))',
+    bd: 'rgba(216, 90, 48, 0.28)',
+    accent: 'linear-gradient(135deg, #993C1D, #D85A30)',
+    glow: '#D85A30', shadow: 'rgba(216, 90, 48, 0.35)',
+    ac: '#F0997B',
+    bnr: 'linear-gradient(135deg, #993C1D, #D85A30)',
+    c1: '#993C1D', c2: '#D85A30',
+    items: [
+      { name: 'Deltoid', desc: 'Large triangular muscle covering the shoulder.', loc: 'Shoulder', fn: 'Arm abduction, flexion, extension' },
+      { name: 'Biceps brachii', desc: 'Two-headed muscle on the anterior arm flexing the elbow.', loc: 'Anterior upper arm', fn: 'Elbow flexion, forearm supination' },
+      { name: 'Triceps brachii', desc: 'Three-headed muscle on the posterior arm.', loc: 'Posterior upper arm', fn: 'Elbow extension' },
+      { name: 'Brachialis', desc: 'Deep anterior arm muscle, primary elbow flexor.', loc: 'Deep anterior arm', fn: 'Elbow flexion' },
+      { name: 'Pectoralis major', desc: 'Large fan-shaped chest muscle.', loc: 'Anterior chest', fn: 'Arm adduction, medial rotation, flexion' },
+      { name: 'Latissimus dorsi', desc: 'Largest back muscle.', loc: 'Mid-to-lower back', fn: 'Arm adduction, extension, medial rotation' },
+      { name: 'Trapezius', desc: 'Diamond-shaped muscle of the upper back and neck.', loc: 'Upper back and neck', fn: 'Scapular elevation, retraction, depression' },
+      { name: 'Rhomboid major', desc: 'Muscle between the spine and scapula.', loc: 'Upper back (deep)', fn: 'Scapular retraction' },
+      { name: 'Serratus anterior', desc: 'Saw-toothed muscle on the side of the chest.', loc: 'Lateral thorax', fn: 'Scapular protraction and upward rotation' },
+      { name: 'Rectus abdominis', desc: 'Vertical anterior abdominal muscle, the "six-pack".', loc: 'Anterior abdomen', fn: 'Trunk flexion, posture' },
+      { name: 'External oblique', desc: 'Outermost lateral abdominal muscle.', loc: 'Lateral abdomen', fn: 'Trunk flexion, lateral flexion, rotation' },
+      { name: 'Internal oblique', desc: 'Middle layer lateral abdominal muscle.', loc: 'Lateral abdomen (deep)', fn: 'Trunk rotation, lateral flexion' },
+      { name: 'Transverse abdominis', desc: 'Deepest abdominal muscle for core stability.', loc: 'Deep abdomen', fn: 'Core stability, abdominal compression' },
+      { name: 'Gluteus maximus', desc: 'Largest muscle in the body, primary hip extensor.', loc: 'Buttock', fn: 'Hip extension, lateral rotation' },
+      { name: 'Gluteus medius', desc: 'Lateral hip muscle stabilizing the pelvis.', loc: 'Lateral hip', fn: 'Hip abduction, pelvic stabilization' },
+      { name: 'Quadriceps femoris', desc: 'Four-part muscle group on the anterior thigh.', loc: 'Anterior thigh', fn: 'Knee extension, hip flexion' },
+      { name: 'Hamstrings', desc: 'Three-muscle group on the posterior thigh.', loc: 'Posterior thigh', fn: 'Knee flexion, hip extension' },
+      { name: 'Sartorius', desc: 'Longest muscle in the body, runs diagonally across the thigh.', loc: 'Anterior thigh', fn: 'Hip flexion, abduction, lateral rotation' },
+      { name: 'Adductor magnus', desc: 'Large medial thigh muscle.', loc: 'Medial thigh', fn: 'Hip adduction and extension' },
+      { name: 'Gastrocnemius', desc: 'Two-headed superficial calf muscle.', loc: 'Posterior calf', fn: 'Plantarflexion, knee flexion' },
+      { name: 'Soleus', desc: 'Deep calf muscle beneath the gastrocnemius.', loc: 'Deep posterior calf', fn: 'Plantarflexion, postural support' },
+      { name: 'Tibialis anterior', desc: 'Muscle on the front of the lower leg.', loc: 'Anterior lower leg', fn: 'Dorsiflexion, foot inversion' },
+      { name: 'Sternocleidomastoid', desc: 'Prominent neck muscle from sternum/clavicle to mastoid.', loc: 'Lateral neck', fn: 'Head rotation and flexion' },
+      { name: 'Masseter', desc: 'Powerful jaw muscle for chewing.', loc: 'Side of face', fn: 'Mastication, jaw closure' }
+    ]
+  },
+  Respiratory: {
+    icon: SVG.lungs,
+    bg: 'linear-gradient(135deg, rgba(15, 110, 86, 0.22), rgba(29, 158, 117, 0.08))',
+    bd: 'rgba(29, 158, 117, 0.32)',
+    accent: 'linear-gradient(135deg, #0F6E56, #1D9E75)',
+    glow: '#1D9E75', shadow: 'rgba(29, 158, 117, 0.35)',
+    ac: '#5DCAA5',
+    bnr: 'linear-gradient(135deg, #0F6E56, #1D9E75)',
+    c1: '#0F6E56', c2: '#1D9E75',
+    items: [
+      { name: 'Trachea', desc: 'Windpipe with C-shaped hyaline cartilage rings.', loc: 'Anterior neck/upper thorax', fn: 'Air conduction, airway protection' },
+      { name: 'Larynx', desc: 'Voice box containing the vocal cords.', loc: 'Anterior neck', fn: 'Phonation, airway protection' },
+      { name: 'Pharynx', desc: 'Throat region passageway for air and food.', loc: 'Posterior throat', fn: 'Air and food passage' },
+      { name: 'Diaphragm', desc: 'Dome-shaped muscle separating thorax from abdomen.', loc: 'Below the lungs', fn: 'Inhalation, abdominal pressure' },
+      { name: 'Bronchus', desc: 'Main branches of the trachea entering each lung.', loc: 'Hilum of lungs', fn: 'Air distribution to lungs' },
+      { name: 'Bronchioles', desc: 'Small branches of bronchi without cartilage.', loc: 'Within lungs', fn: 'Air distribution, airflow regulation' },
+      { name: 'Alveoli', desc: 'Tiny air sacs where gas exchange occurs.', loc: 'Lung tissue', fn: 'Oxygen and carbon dioxide exchange' },
+      { name: 'Lungs', desc: 'Paired thoracic organs for gas exchange.', loc: 'Thoracic cavity', fn: 'Respiration, gas exchange' },
+      { name: 'Pleura', desc: 'Double-layered serous membrane around the lungs.', loc: 'Thoracic cavity', fn: 'Reduces friction during breathing' },
+      { name: 'Epiglottis', desc: 'Flap of cartilage covering the larynx during swallowing.', loc: 'Above larynx', fn: 'Prevents food entering airway' },
+      { name: 'Nasal cavity', desc: 'Hollow space behind the nose.', loc: 'Behind the nose', fn: 'Air conditioning, olfaction' },
+      { name: 'Vocal cords', desc: 'Folds of mucous membrane in the larynx.', loc: 'Within larynx', fn: 'Sound production' }
+    ]
+  },
+  Cardiovascular: {
+    icon: SVG.heart,
+    bg: 'linear-gradient(135deg, rgba(163, 45, 45, 0.2), rgba(226, 75, 74, 0.08))',
+    bd: 'rgba(226, 75, 74, 0.32)',
+    accent: 'linear-gradient(135deg, #A32D2D, #E24B4A)',
+    glow: '#E24B4A', shadow: 'rgba(226, 75, 74, 0.35)',
+    ac: '#F09595',
+    bnr: 'linear-gradient(135deg, #A32D2D, #E24B4A)',
+    c1: '#A32D2D', c2: '#E24B4A',
+    items: [
+      { name: 'Heart', desc: 'Muscular organ pumping blood through the body.', loc: 'Mediastinum (chest)', fn: 'Blood circulation' },
+      { name: 'Aorta', desc: 'Largest artery, carrying oxygenated blood from the heart.', loc: 'Originates at left ventricle', fn: 'Systemic blood distribution' },
+      { name: 'Vena cava', desc: 'Two largest veins returning blood to the heart.', loc: 'Returns to right atrium', fn: 'Venous return to heart' },
+      { name: 'Right atrium', desc: 'Upper right heart chamber receiving deoxygenated blood.', loc: 'Upper right heart', fn: 'Receives systemic venous blood' },
+      { name: 'Left atrium', desc: 'Upper left heart chamber receiving oxygenated blood from lungs.', loc: 'Upper left heart', fn: 'Receives pulmonary venous blood' },
+      { name: 'Right ventricle', desc: 'Lower right heart chamber pumping blood to the lungs.', loc: 'Lower right heart', fn: 'Pumps blood to pulmonary circulation' },
+      { name: 'Left ventricle', desc: 'Lower left heart chamber pumping blood to the body.', loc: 'Lower left heart', fn: 'Pumps blood to systemic circulation' },
+      { name: 'Mitral valve', desc: 'Bicuspid valve between left atrium and left ventricle.', loc: 'Left heart', fn: 'Prevents backflow into left atrium' },
+      { name: 'Tricuspid valve', desc: 'Three-cusped valve between right atrium and right ventricle.', loc: 'Right heart', fn: 'Prevents backflow into right atrium' },
+      { name: 'Pulmonary artery', desc: 'Vessel carrying blood from right ventricle to lungs.', loc: 'Exits right ventricle', fn: 'Carries blood to lungs' },
+      { name: 'Coronary arteries', desc: 'Arteries supplying the heart muscle itself.', loc: 'Surface of heart', fn: 'Supplies heart muscle' },
+      { name: 'Capillaries', desc: 'Smallest vessels where exchange occurs.', loc: 'Throughout tissues', fn: 'Gas, nutrient, and waste exchange' }
+    ]
+  },
+  Nervous: {
+    icon: SVG.brain,
+    bg: 'linear-gradient(135deg, rgba(60, 52, 137, 0.25), rgba(127, 119, 221, 0.08))',
+    bd: 'rgba(127, 119, 221, 0.32)',
+    accent: 'linear-gradient(135deg, #3C3489, #7F77DD)',
+    glow: '#7F77DD', shadow: 'rgba(127, 119, 221, 0.4)',
+    ac: '#AFA9EC',
+    bnr: 'linear-gradient(135deg, #3C3489, #7F77DD)',
+    c1: '#3C3489', c2: '#7F77DD',
+    items: [
+      { name: 'Cerebrum', desc: 'Largest part of the brain, divided into two hemispheres.', loc: 'Upper brain', fn: 'Thought, voluntary movement, sensation' },
+      { name: 'Cerebellum', desc: 'Brain region behind the brainstem coordinating movement.', loc: 'Posterior brain', fn: 'Balance, coordination, motor learning' },
+      { name: 'Brainstem', desc: 'Connects cerebrum to spinal cord; medulla, pons, midbrain.', loc: 'Base of brain', fn: 'Vital functions: breathing, heart rate' },
+      { name: 'Spinal cord', desc: 'Long nervous tissue extending through the vertebral canal.', loc: 'Vertebral canal', fn: 'Signal transmission, reflexes' },
+      { name: 'Frontal lobe', desc: 'Anterior brain region for reasoning and voluntary movement.', loc: 'Anterior cerebrum', fn: 'Executive function, motor control, speech' },
+      { name: 'Parietal lobe', desc: 'Brain region processing sensory information.', loc: 'Top/posterior cerebrum', fn: 'Sensation, spatial processing' },
+      { name: 'Temporal lobe', desc: 'Lateral brain region processing auditory information.', loc: 'Lateral cerebrum', fn: 'Hearing, language, memory' },
+      { name: 'Occipital lobe', desc: 'Posterior brain region processing visual information.', loc: 'Posterior cerebrum', fn: 'Vision processing' },
+      { name: 'Hypothalamus', desc: 'Small region regulating homeostasis and hormones.', loc: 'Below thalamus', fn: 'Homeostasis, hormone regulation' },
+      { name: 'Thalamus', desc: 'Relays sensory and motor signals to the cortex.', loc: 'Center of brain', fn: 'Sensory relay, consciousness' },
+      { name: 'Corpus callosum', desc: 'Thick band of nerve fibers between the hemispheres.', loc: 'Between hemispheres', fn: 'Inter-hemispheric communication' }
+    ]
+  },
+  Digestive: {
+    icon: SVG.stomach,
+    bg: 'linear-gradient(135deg, rgba(133, 79, 11, 0.25), rgba(239, 159, 39, 0.08))',
+    bd: 'rgba(239, 159, 39, 0.32)',
+    accent: 'linear-gradient(135deg, #854F0B, #EF9F27)',
+    glow: '#EF9F27', shadow: 'rgba(239, 159, 39, 0.35)',
+    ac: '#FAC775',
+    bnr: 'linear-gradient(135deg, #854F0B, #EF9F27)',
+    c1: '#854F0B', c2: '#BA7517',
+    items: [
+      { name: 'Esophagus', desc: 'Muscular tube from pharynx to stomach.', loc: 'Posterior thorax', fn: 'Food transport via peristalsis' },
+      { name: 'Stomach', desc: 'J-shaped muscular organ mixing food with digestive juices.', loc: 'Upper left abdomen', fn: 'Mechanical and chemical digestion' },
+      { name: 'Small intestine', desc: 'Long coiled tube: duodenum, jejunum, ileum.', loc: 'Central abdomen', fn: 'Nutrient absorption, digestion' },
+      { name: 'Large intestine', desc: 'Wider, shorter intestine: colon and rectum.', loc: 'Frames the abdomen', fn: 'Water absorption, waste storage' },
+      { name: 'Liver', desc: 'Largest internal organ; detoxifies and produces bile.', loc: 'Upper right abdomen', fn: 'Detoxification, bile production, metabolism' },
+      { name: 'Pancreas', desc: 'Glandular organ producing enzymes and insulin.', loc: 'Behind stomach', fn: 'Digestive enzymes, blood sugar regulation' },
+      { name: 'Gallbladder', desc: 'Small sac storing and concentrating bile.', loc: 'Under liver', fn: 'Bile storage and release' },
+      { name: 'Duodenum', desc: 'First section of the small intestine.', loc: 'Upper abdomen', fn: 'Initial digestion of chyme' },
+      { name: 'Jejunum', desc: 'Middle small intestine, primary absorption site.', loc: 'Central abdomen', fn: 'Nutrient absorption' },
+      { name: 'Ileum', desc: 'Final small intestine connecting to large intestine.', loc: 'Lower abdomen', fn: 'Vitamin B12 and bile salt absorption' },
+      { name: 'Colon', desc: 'Main large intestine: ascending, transverse, descending, sigmoid.', loc: 'Frames abdomen', fn: 'Water absorption, fecal formation' },
+      { name: 'Rectum', desc: 'Final straight section of the large intestine.', loc: 'Pelvis', fn: 'Stores feces before elimination' }
+    ]
+  },
+  Urinary: {
+    icon: SVG.kidney,
+    bg: 'linear-gradient(135deg, rgba(153, 53, 86, 0.25), rgba(212, 83, 126, 0.08))',
+    bd: 'rgba(212, 83, 126, 0.32)',
+    accent: 'linear-gradient(135deg, #993556, #D4537E)',
+    glow: '#D4537E', shadow: 'rgba(212, 83, 126, 0.35)',
+    ac: '#ED93B1',
+    bnr: 'linear-gradient(135deg, #993556, #D4537E)',
+    c1: '#993556', c2: '#D4537E',
+    items: [
+      { name: 'Kidney', desc: 'Bean-shaped organ filtering blood to produce urine.', loc: 'Posterior abdomen', fn: 'Filtration, electrolyte balance, blood pressure' },
+      { name: 'Ureter', desc: 'Muscular tube from kidney to bladder.', loc: 'Posterior abdomen', fn: 'Urine transport via peristalsis' },
+      { name: 'Bladder', desc: 'Muscular sac storing urine.', loc: 'Pelvis', fn: 'Urine storage' },
+      { name: 'Urethra', desc: 'Tube carrying urine from the bladder out of the body.', loc: 'Pelvis', fn: 'Urine elimination' },
+      { name: 'Nephron', desc: 'Functional unit of the kidney.', loc: 'Within kidney', fn: 'Filtration and urine formation' },
+      { name: 'Glomerulus', desc: 'Capillary network in the nephron where filtration begins.', loc: 'In nephron', fn: 'Initial blood filtration' },
+      { name: 'Renal cortex', desc: 'Outer layer of the kidney containing most nephrons.', loc: 'Outer kidney', fn: 'Filtration, hormone production' },
+      { name: 'Renal medulla', desc: 'Inner kidney region with renal pyramids.', loc: 'Inner kidney', fn: 'Urine concentration' }
+    ]
+  },
+  Endocrine: {
+    icon: SVG.gland,
+    bg: 'linear-gradient(135deg, rgba(59, 109, 17, 0.25), rgba(151, 196, 89, 0.08))',
+    bd: 'rgba(151, 196, 89, 0.32)',
+    accent: 'linear-gradient(135deg, #3B6D11, #639922)',
+    glow: '#97C459', shadow: 'rgba(151, 196, 89, 0.35)',
+    ac: '#C0DD97',
+    bnr: 'linear-gradient(135deg, #3B6D11, #639922)',
+    c1: '#3B6D11', c2: '#639922',
+    items: [
+      { name: 'Pituitary gland', desc: 'Pea-sized "master gland" at the base of the brain.', loc: 'Base of brain', fn: 'Hormone regulation, growth control' },
+      { name: 'Thyroid gland', desc: 'Butterfly-shaped neck gland regulating metabolism.', loc: 'Anterior neck', fn: 'Metabolism, growth' },
+      { name: 'Parathyroid glands', desc: 'Four small glands behind the thyroid.', loc: 'Posterior thyroid', fn: 'Calcium homeostasis' },
+      { name: 'Adrenal glands', desc: 'Triangular glands atop each kidney.', loc: 'Above kidneys', fn: 'Stress response, blood pressure' },
+      { name: 'Pineal gland', desc: 'Small gland in the brain producing melatonin.', loc: 'Center of brain', fn: 'Sleep-wake cycle regulation' },
+      { name: 'Thymus', desc: 'Upper-chest gland for T-cell maturation.', loc: 'Upper anterior chest', fn: 'Immune system development' },
+      { name: 'Pancreas (islets)', desc: 'Endocrine portion produces insulin and glucagon.', loc: 'Behind stomach', fn: 'Blood sugar regulation' },
+      { name: 'Hypothalamus', desc: 'Links the nervous and endocrine systems.', loc: 'Below thalamus', fn: 'Endocrine and autonomic control' }
+    ]
+  }
+};
+
+let all = [];
+let qDeck = [], qIdx = 0, qCorrect = 0, qTotal = 0, qFilter = 'All';
+let cDeck = [], cIdx = 0, cFlipped = false, cFilter = 'All';
+let studied = new Set();
+let missedItems = []; // tracks items missed this quiz round
+
+function init() {
+  Object.entries(A).forEach(([sys, d]) => {
+    d.items.forEach(it => all.push({ ...it, sys, sd: d }));
+  });
+  document.getElementById('totalCount').textContent = all.length;
+  document.getElementById('systemCount').textContent = Object.keys(A).length;
+  renderSys();
+  buildQF();
+  buildCF();
+  startQ();
+  startC();
+}
+
+function renderSys() {
+  document.getElementById('sysGrid').innerHTML = Object.entries(A).map(([n, d]) => `
+    <div class="sys-card" onclick="openSys('${n}')" style="--bg:${d.bg};--bd:${d.bd};--accent:${d.accent};--glow:${d.glow};--shadow:${d.shadow};">
+      <div class="sys-icon">${d.icon}</div>
+      <div class="sys-name">${n}</div>
+      <div class="sys-count">${d.items.length} structures</div>
+    </div>
+  `).join('');
+}
+
+function openSys(n) {
+  const d = A[n];
+  document.getElementById('bHome').style.display = 'none';
+  document.getElementById('bDetail').style.display = 'none';
+  const list = document.getElementById('bList');
+  list.style.display = 'block';
+  list.innerHTML = `
+    <button class="back" onclick="closeSys()">← All systems</button>
+    <div class="section-head">
+      <div class="section-title">${n}</div>
+      <span class="pill" style="color:${d.ac};border-color:${d.bd};">${d.items.length} structures</span>
+    </div>
+    ${d.items.map(it => `
+      <div class="list-item" style="--ac:${d.ac};" onclick="openD('${it.name.replace(/'/g, "\'")}')">
+        <div class="li-main">
+          <div class="li-name">${it.name}</div>
+          <div class="li-desc">${it.desc}</div>
+        </div>
+        <span class="li-arrow">›</span>
+      </div>
+    `).join('')}
+  `;
+}
+
+function closeSys() {
+  document.getElementById('bHome').style.display = 'block';
+  document.getElementById('bList').style.display = 'none';
+  document.getElementById('bDetail').style.display = 'none';
+}
+
+function openD(name) {
+  const it = all.find(i => i.name === name);
+  if (!it) return;
+  studied.add(name); upd();
+  document.getElementById('bHome').style.display = 'none';
+  document.getElementById('bList').style.display = 'none';
+  const d = document.getElementById('bDetail');
+  d.style.display = 'block';
+  d.innerHTML = `
+    <button class="back" onclick="openSys('${it.sys}')">← ${it.sys}</button>
+    <div class="detail">
+      <div class="banner" style="--bnr:${it.sd.bnr};background:${it.sd.bnr};">
+        <div class="banner-icon">${it.sd.icon}</div>
+        <div class="banner-cat">${it.sys}</div>
+        <div class="banner-name">${it.name}</div>
+      </div>
+      <div class="body">
+        <div class="row"><div class="row-label">Description</div><div class="row-val">${it.desc}</div></div>
+        <div class="row"><div class="row-label">Location</div><div class="row-val">${it.loc}</div></div>
+        <div class="row"><div class="row-label">Function</div><div class="row-val">${it.fn}</div></div>
+      </div>
+    </div>
+  `;
+}
+
+function buildQF() {
+  document.getElementById('qFilters').innerHTML = ['All', ...Object.keys(A)].map(o =>
+    `<button class="filter ${o === qFilter ? 'active' : ''}" onclick="setQF('${o}')">${o}</button>`
+  ).join('');
+}
+
+function setQF(f) { qFilter = f; buildQF(); startQ(); }
+
+function startQ() {
+  const pool = qFilter === 'All' ? all : all.filter(i => i.sys === qFilter);
+  qDeck = shuffle([...pool]).slice(0, Math.min(15, pool.length));
+  qIdx = 0; qCorrect = 0; qTotal = 0;
+  missedItems = [];
+  qSubmitted = false;
+  renderQ();
+}
+
+function renderQ() {
+  const m = document.getElementById('qMain');
+  if (qIdx >= qDeck.length) {
+    const acc = qTotal > 0 ? Math.round((qCorrect / qTotal) * 100) : 0;
+    let msg = acc === 100 ? 'Perfect score. Outstanding work.' :
+              acc >= 80 ? 'Excellent. You know this material well.' :
+              acc >= 60 ? 'Good progress. Review the misses and try again.' :
+              'Keep going. Repetition is how anatomy sticks.';
+    const hasReview = missedItems.length > 0;
+    m.innerHTML = `
+      <div class="complete">
+        <div class="complete-label">Round complete</div>
+        <div class="complete-num">${qCorrect}/${qTotal}</div>
+        <div class="complete-label">${acc}% accuracy</div>
+        <div class="complete-msg">${msg}</div>
+        <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn" onclick="startQ()" style="background:white;color:#3C3489;border:none;padding:0.875rem 2rem;font-weight:500;">New round</button>
+          ${hasReview ? `<button class="btn" onclick="goToReview()" style="background:rgba(255,255,255,0.15);color:white;border:1px solid rgba(255,255,255,0.3);padding:0.875rem 2rem;font-weight:500;">Review ${missedItems.length} missed →</button>` : ''}
+        </div>
+      </div>
+    `;
+    if (hasReview) buildReview();
+    return;
+  }
+  const it = qDeck[qIdx];
+  const acc = qTotal > 0 ? Math.round((qCorrect / qTotal) * 100) : 0;
+  m.innerHTML = `
+    <div class="quiz-card">
+      <div class="quiz-banner">
+        <span>Question ${qIdx + 1} of ${qDeck.length}</span>
+        <span>Score <strong>${qCorrect}/${qTotal}</strong> · ${qTotal > 0 ? acc + '%' : '—'}</span>
+      </div>
+      <div class="quiz-body">
+        <div class="quiz-prompt">Identify this structure</div>
+        <div class="quiz-clue">${it.desc}</div>
+        <div class="quiz-meta">
+          <span class="tag tag-sys">${it.sys}</span>
+          <span class="tag tag-loc">${it.loc}</span>
+        </div>
+        <div class="feedback" id="qFb"></div>
+        <div class="input-row">
+          <input type="text" class="q-input" id="qIn" placeholder="Your answer..." autocomplete="off">
+          <button class="btn btn-primary" onclick="sub()">Submit</button>
+        </div>
+        <div class="track"><div class="fill" style="width:${(qIdx / qDeck.length) * 100}%"></div></div>
+      </div>
+    </div>
+  `;
+  const inp = document.getElementById('qIn');
+  inp.focus();
+  inp.addEventListener('keydown', function onKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); inp.removeEventListener('keydown', onKey); sub(); }
+  }, { once: false });
+}
+
+let qSubmitted = false;
+
+function sub() {
+  if (qSubmitted) return;
+  qSubmitted = true;
+  const inp = document.getElementById('qIn');
+  const fb = document.getElementById('qFb');
+  const it = qDeck[qIdx];
+  const a = inp.value.trim().toLowerCase();
+  const c = it.name.toLowerCase();
+  const ok = a === c || close(a, c);
+  qTotal++;
+  studied.add(it.name); upd();
+  if (ok) {
+    qCorrect++;
+    fb.className = 'feedback ok show';
+    fb.innerHTML = `Correct. The answer is ${it.name}.`;
+  } else {
+    fb.className = 'feedback no show';
+    fb.innerHTML = `Not quite. The answer is ${it.name}.`;
+    if (!missedItems.find(m => m.name === it.name)) missedItems.push(it);
+  }
+  document.getElementById('accuracyStat').textContent = Math.round((qCorrect / qTotal) * 100) + '%';
+  inp.disabled = true;
+  // Show a Next button instead of auto-advancing
+  const inputRow = inp.closest('.input-row');
+  inputRow.innerHTML = `<button class="btn btn-primary" style="width:100%;" id="nextBtn" onclick="nextQ()">Next →</button>`;
+  document.getElementById('nextBtn').focus();
+  document.addEventListener('keydown', function onEnterNext(e) {
+    if (e.key === 'Enter' && e.shiftKey) { e.preventDefault(); document.removeEventListener('keydown', onEnterNext); nextQ(); }
+  });
+}
+
+function nextQ() {
+  qIdx++;
+  qSubmitted = false;
+  renderQ();
+}
+
+function close(a, b) {
+  if (Math.abs(a.length - b.length) > 2) return false;
+  let d = 0;
+  for (let i = 0; i < Math.max(a.length, b.length); i++) if (a[i] !== b[i]) d++;
+  return d <= 1;
+}
+
+function buildCF() {
+  document.getElementById('cFilters').innerHTML = ['All', ...Object.keys(A)].map(o =>
+    `<button class="filter ${o === cFilter ? 'active' : ''}" onclick="setCF('${o}')">${o}</button>`
+  ).join('');
+}
+
+function setCF(f) { cFilter = f; buildCF(); startC(); }
+
+function startC() {
+  const pool = cFilter === 'All' ? all : all.filter(i => i.sys === cFilter);
+  cDeck = shuffle([...pool]);
+  cIdx = 0; cFlipped = false;
+  show();
+}
+
+function show() {
+  if (!cDeck.length) return;
+  const it = cDeck[cIdx];
+  const fc = document.getElementById('fc');
+  fc.style.setProperty('--c1', it.sd.c1);
+  fc.style.setProperty('--c2', it.sd.c2);
+  document.getElementById('fcIcon').innerHTML = it.sd.icon;
+  document.getElementById('fcCat').textContent = it.sys;
+  document.getElementById('fcContent').textContent = it.name;
+  document.getElementById('fcContent').classList.remove('answer');
+  document.getElementById('fcHint').textContent = 'Tap to reveal';
+  document.getElementById('cProg').textContent = `Card ${cIdx + 1} of ${cDeck.length}`;
+  document.getElementById('cFill').style.width = ((cIdx + 1) / cDeck.length) * 100 + '%';
+  cFlipped = false;
+}
+
+function flip() {
+  const it = cDeck[cIdx];
+  cFlipped = !cFlipped;
+  if (cFlipped) {
+    studied.add(it.name); upd();
+    document.getElementById('fcContent').textContent = it.desc;
+    document.getElementById('fcContent').classList.add('answer');
+    document.getElementById('fcHint').textContent = `${it.loc} · ${it.fn}`;
+  } else {
+    document.getElementById('fcContent').textContent = it.name;
+    document.getElementById('fcContent').classList.remove('answer');
+    document.getElementById('fcHint').textContent = 'Tap to reveal';
+  }
+}
+
+function next() { cIdx = (cIdx + 1) % cDeck.length; show(); }
+function prev() { cIdx = (cIdx - 1 + cDeck.length) % cDeck.length; show(); }
+function shuf() { cDeck = shuffle([...cDeck]); cIdx = 0; show(); }
+
+function srch() {
+  const q = document.getElementById('sInput').value.trim().toLowerCase();
+  const r = document.getElementById('sResults');
+  if (!q) { r.innerHTML = '<div class="empty">Start typing to search across all systems.</div>'; return; }
+  const m = all.filter(it =>
+    it.name.toLowerCase().includes(q) ||
+    it.desc.toLowerCase().includes(q) ||
+    it.loc.toLowerCase().includes(q) ||
+    it.fn.toLowerCase().includes(q)
+  );
+  if (!m.length) { r.innerHTML = '<div class="empty">No structures match your search.</div>'; return; }
+  r.innerHTML = `
+    <div class="section-head"><span class="pill">${m.length} result${m.length === 1 ? '' : 's'}</span></div>
+    ${m.map(it => `
+      <div class="list-item" style="--ac:${it.sd.ac};" onclick="sOpen('${it.name.replace(/'/g, "\'")}')">
+        <div class="li-main">
+          <div class="li-name">${it.name}</div>
+          <div style="font-size:11px;color:${it.sd.ac};margin-bottom:4px;font-weight:500;">${it.sys}</div>
+          <div class="li-desc">${it.desc}</div>
+        </div>
+        <span class="li-arrow">›</span>
+      </div>
+    `).join('')}
+  `;
+}
+
+function sOpen(name) { document.querySelector('[data-tab="browse"]').click(); openD(name); }
+
+function goToReview() {
+  document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(x => x.classList.remove('active'));
+  document.getElementById('reviewTab').classList.add('active');
+  document.getElementById('review').classList.add('active');
+}
+
+function getMnemonic(it) {
+  const tips = {
+    // Location-based tips
+    'Upper arm': `Picture the ${it.name} by thinking of your upper arm — it sits between your shoulder and elbow.`,
+    'Thigh': `The ${it.name} runs the length of your thigh. It's the bone you'd feel if you pressed deep into the top of your leg.`,
+    'Lower leg (medial)': `The ${it.name} (shinbone) is on the inside of your lower leg — you can feel it right under the skin at the front.`,
+    'Anterior chest': `Anything at the anterior chest is up front, center. Think of what you'd touch if you placed your hand on your chest.`,
+    'Posterior thorax': `"Posterior" = behind, "thorax" = chest area. The ${it.name} is in your back, running from throat to stomach.`,
+    'Upper back': `The ${it.name} spans your upper back. Reach behind your neck and you're near it.`,
+  };
+  // Function-based keyword tips
+  if (it.fn.toLowerCase().includes('pump') || it.fn.toLowerCase().includes('circulation')) {
+    return `Focus on the word "pump" — the ${it.name}'s job is keeping blood moving. Link the name to the action of pumping.`;
+  }
+  if (it.fn.toLowerCase().includes('gas exchange') || it.fn.toLowerCase().includes('respiration')) {
+    return `Think "in with oxygen, out with CO₂." The ${it.name} is where this swap happens. Visualize tiny balloons inflating and deflating.`;
+  }
+  if (it.fn.toLowerCase().includes('filtration') || it.fn.toLowerCase().includes('urine')) {
+    return `The ${it.name} is a filter — imagine it as a coffee filter cleaning your blood. What passes through becomes urine.`;
+  }
+  if (it.fn.toLowerCase().includes('hormone') || it.fn.toLowerCase().includes('regulation')) {
+    return `The ${it.name} controls chemical messengers (hormones). Think of it as a radio tower broadcasting signals to the rest of the body.`;
+  }
+  if (it.fn.toLowerCase().includes('flexion') || it.fn.toLowerCase().includes('extension')) {
+    return `Muscle memory trick: flex your ${it.loc.toLowerCase()} and feel it contract — that's the ${it.name} working. Extension is the opposite motion.`;
+  }
+  if (it.fn.toLowerCase().includes('absorption')) {
+    return `The ${it.name} absorbs nutrients. Picture millions of tiny fingers (villi) lining the inside, grabbing nutrients as food passes by.`;
+  }
+  if (it.fn.toLowerCase().includes('protect') || it.fn.toLowerCase().includes('protection')) {
+    return `The ${it.name}'s role is protection. Think of it as armor — it shields whatever is behind or inside it.`;
+  }
+  // Location fallback
+  if (tips[it.loc]) return tips[it.loc];
+  // Generic fallback
+  return `Break the name down: say "${it.name}" out loud a few times while pointing to its location (${it.loc}). Pairing the sound with the place helps it stick.`;
+}
+
+function buildReview() {
+  const el = document.getElementById('reviewContent');
+  if (!missedItems.length) {
+    el.innerHTML = `
+      <div class="review-empty">
+        <div class="review-empty-icon">🎯</div>
+        <div>No missed questions yet.</div>
+        <div style="margin-top:6px;font-size:12px;">Complete a quiz round and any misses will appear here.</div>
+      </div>`;
+    return;
+  }
+  const bySystem = {};
+  missedItems.forEach(it => {
+    if (!bySystem[it.sys]) bySystem[it.sys] = [];
+    bySystem[it.sys].push(it);
+  });
+  const systemList = Object.keys(bySystem);
+  el.innerHTML = `
+    <div class="review-summary">
+      <div class="review-summary-icon">📋</div>
+      <div class="review-summary-text">
+        <div class="review-summary-title">You missed ${missedItems.length} structure${missedItems.length > 1 ? 's' : ''}</div>
+        <div class="review-summary-sub">Across ${systemList.length} system${systemList.length > 1 ? 's' : ''}: ${systemList.join(', ')}. Tap each card to see the full details and a memory tip.</div>
+      </div>
+    </div>
+    <div class="section-head" style="margin-bottom:0.75rem;">
+      <div class="section-title">Missed structures</div>
+      <span class="review-badge badge-missed">✗ ${missedItems.length} missed</span>
+    </div>
+    ${missedItems.map((it, i) => `
+      <div class="review-card" id="rc-${i}">
+        <div class="review-card-header" onclick="toggleReviewCard(${i})">
+          <div style="flex:1;min-width:0;">
+            <div class="review-card-name">${it.name}</div>
+            <span class="review-card-sys">${it.sys}</span>
+            <div class="review-card-clue">${it.desc}</div>
+          </div>
+          <span class="review-chevron">›</span>
+        </div>
+        <div class="review-card-body">
+          <div class="review-row">
+            <div class="review-row-label">Location</div>
+            <div class="review-row-val">${it.loc}</div>
+          </div>
+          <div class="review-row">
+            <div class="review-row-label">Function</div>
+            <div class="review-row-val">${it.fn}</div>
+          </div>
+          <div class="review-tip">
+            <div class="review-tip-label">💡 Memory tip</div>
+            <div class="review-tip-text">${getMnemonic(it)}</div>
+          </div>
+        </div>
+      </div>
+    `).join('')}
+    <div class="review-actions">
+      <button class="btn btn-primary" onclick="startQ();goToQuiz()">Retry quiz</button>
+      <button class="btn" onclick="retryMissed()">Quiz only missed (${missedItems.length})</button>
+    </div>
+  `;
+}
+
+function toggleReviewCard(i) {
+  const card = document.getElementById('rc-' + i);
+  card.classList.toggle('open');
+}
+
+function goToQuiz() {
+  document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(x => x.classList.remove('active'));
+  document.querySelector('[data-tab="quiz"]').classList.add('active');
+  document.getElementById('quiz').classList.add('active');
+}
+
+function retryMissed() {
+  if (!missedItems.length) return;
+  const saved = [...missedItems];
+  qDeck = shuffle([...saved]);
+  qIdx = 0; qCorrect = 0; qTotal = 0;
+  missedItems = [];
+  renderQ();
+  goToQuiz();
+}
+
+function shuffle(a) {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function upd() { document.getElementById('studiedCount').textContent = studied.size; }
+
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById(t.dataset.tab).classList.add('active');
+  });
+});
+
+document.getElementById('sResults').innerHTML = '<div class="empty">Start typing to search across all systems.</div>';
+
+buildReview();
+init();
+</script>
+</body>
+</html>
